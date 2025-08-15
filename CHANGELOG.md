@@ -1,27 +1,33 @@
-# Changelog
-All notable changes to this project will be documented here.
+# CHANGELOG
+
+All notable changes to this project will be documented in this file.  
+The format follows *Semantic Versioning*: vMAJOR.MINOR.PATCH  
+- *MAJOR*: Significant changes or new modules  
+- *MINOR*: New features or improvements  
+- *PATCH*: Small fixes or adjustments  
+
+---
 
 ## [v1.0.0] 
-- Created initial version with 3 quiz questions
-- Added scoring system
+- Initial project proposal completed.
+- Added project objectives, planned features, and logic plan.
 
-## [v1.0.1] 
-- Fixed incorrect answer check for Question 2
-- Adjusted feedback messages
-
-## [v1.1.0]
-- Added 2 more quiz questions
-- Updated menu to include "Play Again" option
-
-## [v1.1.1] 
-- Fixed spacing in final score output
-- Corrected typos in question text
+## [v1.1.0] 
+- Created basic program structure and main menu.
+- Added "Add Expense" feature to record amount, date, category, and notes.
 
 ## [v1.2.0] 
-- Added category labels for questions (e.g., Geography, Math)
-- Improved user prompts
+- Implemented "View Expenses" feature showing all recorded entries.
+- Added automatic total expense calculation.
 
-## [v1.2.1] 
-- Fixed crash when user inputs invalid choice
-- Updated README.md with new sample output
+## [v1.3.0]
+- Added "Search Expenses" feature by category or date.
+- Improved menu navigation.
 
+## [v1.3.1] 
+- Fixed bug where expenses with no category caused an error.
+- Adjusted output formatting for better readability.
+
+## [v1.4.0] 
+- Added monthly spending report feature.
+- Optimized expense storage for faster loading.
