@@ -106,14 +106,4 @@ This project follows basic programming and computing ethics:
 * User privacy is protected because all data is stored locally
 * Ethical guidance is based on general ACM Code of Ethics principles
 
-References (APA Style)
 
-Python Software Foundation. (2024). Python documentation. https://docs.python.org/3/
-
-Python Software Foundation. (2024). json — JSON encoder and decoder. https://docs.python.org/3/library/json.html
-
-Python Software Foundation. (2024). csv — CSV file reading and writing. https://docs.python.org/3/library/csv.html
-
-Python Software Foundation. (2024). datetime — Basic date and time types. https://docs.python.org/3/library/datetime.html
-
-Association for Computing Machinery. (2018). ACM code of ethics and professional conduct. https://www.acm.org/code-of-ethics
