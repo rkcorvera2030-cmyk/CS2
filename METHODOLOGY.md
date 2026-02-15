@@ -106,7 +106,7 @@ This project follows basic programming and computing ethics:
 * User privacy is protected because all data is stored locally
 * Ethical guidance is based on general ACM Code of Ethics principles
 
-## References (APA Style)
+## References
 
 Python Software Foundation. (2024). *Python documentation*. [https://docs.python.org/3/](https://docs.python.org/3/)
 
