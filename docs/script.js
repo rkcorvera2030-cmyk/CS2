@@ -6,9 +6,22 @@ localStorage.setItem("expenses", JSON.stringify(expenses));
 }
 
 
+function updateTotal(){
+
+let total=0;
+
+expenses.forEach(e=>{
+total+=e.amount;
+});
+
+document.getElementById("totalAmount").innerText="₱"+total;
+
+}
+
+
 function render(){
 
-let list = document.getElementById("expenseList");
+let list=document.getElementById("expenseList");
 list.innerHTML="";
 
 expenses.forEach((e,i)=>{
@@ -23,6 +36,8 @@ list.appendChild(li);
 
 });
 
+updateTotal();
+
 }
 
 
@@ -34,7 +49,7 @@ let category=document.getElementById("category").value;
 let note=document.getElementById("note").value;
 
 if(!amount || !date){
-alert("Please enter amount and date.");
+alert("Enter amount and date");
 return;
 }
 
@@ -49,7 +64,6 @@ save();
 render();
 
 document.getElementById("amount").value="";
-document.getElementById("category").value="";
 document.getElementById("note").value="";
 
 }
@@ -88,17 +102,13 @@ function categorySummary(){
 let summary={};
 
 expenses.forEach(e=>{
-
 summary[e.category]=(summary[e.category]||0)+e.amount;
-
 });
 
 let text="";
 
 for(let cat in summary){
-
 text+=cat+" : ₱"+summary[cat]+"\n";
-
 }
 
 document.getElementById("report").innerText=text;
