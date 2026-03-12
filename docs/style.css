@@ -1,88 +1,214 @@
-body{
-font-family:Arial;
-margin:0;
-background:#f4f6f9;
+let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+let budget = JSON.parse(localStorage.getItem("budget")) || null;
+
+
+function save(){
+localStorage.setItem("expenses",JSON.stringify(expenses));
 }
 
-header{
-background:#5f9cff;
-color:white;
-text-align:center;
-padding:25px;
+function saveBudget(){
+localStorage.setItem("budget",JSON.stringify(budget));
 }
 
-.container{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-gap:20px;
-padding:20px;
+
+function updateTotal(){
+
+let total = 0;
+
+expenses.forEach(e=>{
+total += e.amount;
+});
+
+document.getElementById("totalAmount").innerText = "₱" + total;
+
+if(budget){
+document.getElementById("budgetDisplay").innerText = "₱" + budget;
+
+if(total > budget){
+alert("Warning: Budget exceeded!");
+}
 }
 
-.dashboard{
-display:flex;
-justify-content:center;
-gap:20px;
-padding:20px;
 }
 
-.card{
-background:white;
-padding:20px;
-border-radius:10px;
-box-shadow:0 4px 10px rgba(0,0,0,0.1);
+
+function render(){
+
+let list = document.getElementById("expenseList");
+
+list.innerHTML = "";
+
+expenses.forEach((e,i)=>{
+
+let li = document.createElement("li");
+
+li.innerHTML = `
+<span>₱${e.amount} | ${e.date} | ${e.category} | ${e.note}</span>
+
+<div class="actions">
+<button class="editBtn" onclick="editExpense(${i})">Edit</button>
+<button class="deleteBtn" onclick="deleteExpense(${i})">Delete</button>
+</div>
+`;
+
+list.appendChild(li);
+
+});
+
+updateTotal();
+
 }
 
-input,select{
-width:100%;
-padding:8px;
-margin:8px 0;
-border-radius:5px;
-border:1px solid #ccc;
+
+function addExpense(){
+
+let amount = document.getElementById("amount").value;
+let date = document.getElementById("date").value;
+let category = document.getElementById("category").value;
+let note = document.getElementById("note").value;
+
+if(!amount || !date){
+alert("Please enter amount and date");
+return;
 }
 
-button{
-background:#5f9cff;
-border:none;
-color:white;
-padding:10px;
-border-radius:5px;
-cursor:pointer;
-margin-top:5px;
-width:100%;
+let today = new Date().toISOString().split("T")[0];
+
+if(date > today){
+alert("Date cannot be in the future");
+return;
 }
 
-button:hover{
-background:#4a82d4;
+expenses.push({
+amount:parseFloat(amount),
+date:date,
+category:category,
+note:note
+});
+
+save();
+render();
+
+document.getElementById("amount").value="";
+document.getElementById("note").value="";
+
 }
 
-ul{
-list-style:none;
-padding:0;
+
+function editExpense(index){
+
+let e = expenses[index];
+
+let newAmount = prompt("Edit Amount:", e.amount);
+let newDate = prompt("Edit Date (YYYY-MM-DD):", e.date);
+let newCategory = prompt("Edit Category:", e.category);
+let newNote = prompt("Edit Note:", e.note);
+
+if(!newAmount || !newDate){
+alert("Amount and date required");
+return;
 }
 
-li{
-background:#f8f8f8;
-padding:10px;
-margin:6px 0;
-border-radius:5px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:10px;
+let today = new Date().toISOString().split("T")[0];
+
+if(newDate > today){
+alert("Date cannot be in the future");
+return;
 }
 
-li button{
-width:auto;
-padding:5px 10px;
-background:#ff5c5c;
+expenses[index] = {
+amount:parseFloat(newAmount),
+date:newDate,
+category:newCategory,
+note:newNote
+};
+
+save();
+render();
+
 }
 
-li button.edit{
-background:#4CAF50;
+
+function deleteExpense(index){
+
+expenses.splice(index,1);
+
+save();
+render();
+
 }
 
-#totalAmount{
-font-size:24px;
-font-weight:bold;
-color:#4CAF50;
+
+function setBudget(){
+
+let value = prompt("Enter your budget:");
+
+if(value === null || value === ""){
+return;
 }
+
+budget = parseFloat(value);
+
+saveBudget();
+
+render();
+
+}
+
+
+function monthlyReport(){
+
+let month = prompt("Enter month (YYYY-MM)");
+
+let total = 0;
+
+expenses.forEach(e=>{
+if(e.date.startsWith(month)){
+total += e.amount;
+}
+});
+
+document.getElementById("report").innerText =
+"Total for " + month + ": ₱" + total;
+
+}
+
+
+function categorySummary(){
+
+let summary = {};
+
+expenses.forEach(e=>{
+summary[e.category] = (summary[e.category] || 0) + e.amount;
+});
+
+let text = "";
+
+for(let cat in summary){
+text += cat + " : ₱" + summary[cat] + "\n";
+}
+
+document.getElementById("report").innerText = text;
+
+}
+
+
+function exportCSV(){
+
+let csv = "Amount,Date,Category,Note\n";
+
+expenses.forEach(e=>{
+csv += `${e.amount},${e.date},${e.category},${e.note}\n`;
+});
+
+let blob = new Blob([csv],{type:"text/csv"});
+
+let a = document.createElement("a");
+a.href = URL.createObjectURL(blob);
+a.download = "expenses.csv";
+a.click();
+
+}
+
+
+render();
