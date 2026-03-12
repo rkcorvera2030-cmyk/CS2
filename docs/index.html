@@ -1,35 +1,37 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-
 <meta charset="UTF-8">
-<title>CodeQuest Expense Tracker</title>
-
+<title>Expense Tracker</title>
 <link rel="stylesheet" href="style.css">
-
 </head>
 
 <body>
 
 <header>
-<h1>💰 CodeQuest Expense Tracker</h1>
-<p>Track your school spending easily</p>
+<h1>💰 Expense Tracker</h1>
+<p>Simple Personal Expense Manager</p>
 </header>
-
 
 <div class="dashboard">
 
-<div class="card total-card">
+<div class="card">
 <h2>Total Expenses</h2>
 <p id="totalAmount">₱0</p>
 </div>
 
+<div class="card">
+<h2>Budget</h2>
+<p id="budgetDisplay">Not Set</p>
+<button onclick="setBudget()">Set Budget</button>
 </div>
 
+</div>
 
 <div class="container">
 
-<div class="card form-card">
+<div class="card">
 
 <h2>Add Expense</h2>
 
@@ -52,8 +54,7 @@
 </div>
 
 
-
-<div class="card list-card">
+<div class="card">
 
 <h2>Expense List</h2>
 
@@ -62,8 +63,7 @@
 </div>
 
 
-
-<div class="card report-card">
+<div class="card">
 
 <h2>Reports</h2>
 
@@ -73,19 +73,11 @@
 
 <button onclick="exportCSV()">Export CSV</button>
 
-<button onclick="setBudget()">Set Budget</button>
-
 <p id="report"></p>
 
 </div>
 
 </div>
-
-
-<footer>
-<p>CodeQuest Expense Tracker | Cloud Computing Project</p>
-</footer>
-
 
 <script src="script.js"></script>
 
