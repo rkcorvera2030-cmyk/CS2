@@ -1,36 +1,52 @@
 let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
-
+let budget = JSON.parse(localStorage.getItem("budget")) || null;
 
 function save(){
-localStorage.setItem("expenses", JSON.stringify(expenses));
+localStorage.setItem("expenses",JSON.stringify(expenses));
 }
 
+function saveBudget(){
+localStorage.setItem("budget",JSON.stringify(budget));
+}
 
 function updateTotal(){
 
-let total=0;
+let total = 0;
 
 expenses.forEach(e=>{
-total+=e.amount;
+total += e.amount;
 });
 
-document.getElementById("totalAmount").innerText="₱"+total;
+document.getElementById("totalAmount").innerText = "₱"+total;
 
+if(budget){
+document.getElementById("budgetDisplay").innerText="₱"+budget;
+
+if(total > budget){
+alert("Warning: Budget exceeded!");
+}
 }
 
+}
 
 function render(){
 
 let list=document.getElementById("expenseList");
+
 list.innerHTML="";
 
 expenses.forEach((e,i)=>{
 
 let li=document.createElement("li");
 
-li.innerHTML=
-`₱${e.amount} | ${e.date} | ${e.category} | ${e.note}
-<button onclick="deleteExpense(${i})">Delete</button>`;
+li.innerHTML=`
+${e.amount} | ${e.date} | ${e.category} | ${e.note}
+
+<div>
+<button class="edit" onclick="editExpense(${i})">Edit</button>
+<button onclick="deleteExpense(${i})">Delete</button>
+</div>
+`;
 
 list.appendChild(li);
 
@@ -40,7 +56,6 @@ updateTotal();
 
 }
 
-
 function addExpense(){
 
 let amount=document.getElementById("amount").value;
@@ -49,7 +64,14 @@ let category=document.getElementById("category").value;
 let note=document.getElementById("note").value;
 
 if(!amount || !date){
-alert("Enter amount and date");
+alert("Please enter amount and date");
+return;
+}
+
+let today=new Date().toISOString().split("T")[0];
+
+if(date>today){
+alert("Date cannot be in the future");
 return;
 }
 
@@ -65,9 +87,40 @@ render();
 
 document.getElementById("amount").value="";
 document.getElementById("note").value="";
-
 }
 
+function editExpense(index){
+
+let e=expenses[index];
+
+let newAmount=prompt("Edit Amount",e.amount);
+let newDate=prompt("Edit Date YYYY-MM-DD",e.date);
+let newCategory=prompt("Edit Category",e.category);
+let newNote=prompt("Edit Note",e.note);
+
+if(!newAmount || !newDate){
+alert("Amount and date required");
+return;
+}
+
+let today=new Date().toISOString().split("T")[0];
+
+if(newDate>today){
+alert("Date cannot be in the future");
+return;
+}
+
+expenses[index]={
+amount:parseFloat(newAmount),
+date:newDate,
+category:newCategory,
+note:newNote
+};
+
+save();
+render();
+
+}
 
 function deleteExpense(index){
 
@@ -77,7 +130,6 @@ save();
 render();
 
 }
-
 
 function monthlyReport(){
 
@@ -92,10 +144,9 @@ total+=e.amount;
 });
 
 document.getElementById("report").innerText=
-"Total spending for "+month+": ₱"+total;
+"Total for "+month+": ₱"+total;
 
 }
-
 
 function categorySummary(){
 
@@ -107,18 +158,17 @@ summary[e.category]=(summary[e.category]||0)+e.amount;
 
 let text="";
 
-for(let cat in summary){
-text+=cat+" : ₱"+summary[cat]+"\n";
+for(let c in summary){
+text+=c+" : ₱"+summary[c]+"\n";
 }
 
 document.getElementById("report").innerText=text;
 
 }
 
-
 function exportCSV(){
 
-let csv="Amount,Date,Category,Notes\n";
+let csv="Amount,Date,Category,Note\n";
 
 expenses.forEach(e=>{
 csv+=`${e.amount},${e.date},${e.category},${e.note}\n`;
@@ -133,5 +183,18 @@ a.click();
 
 }
 
+function setBudget(){
+
+let value=prompt("Enter budget");
+
+if(!value) return;
+
+budget=parseFloat(value);
+
+saveBudget();
+
+render();
+
+}
 
 render();
