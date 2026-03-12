@@ -1,86 +1,342 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Expense Tracker</title>
-<link rel="stylesheet" href="style.css">
-</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Expense Tracker</title>
+    
+    <!-- Simple, beginner-friendly CSS -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
+        .card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        .summary {
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .small-btn {
+            width: auto;
+            padding: 5px 10px;
+            margin: 2px;
+            background-color: #e74c3c;
+        }
+
+        .edit-btn {
+            background-color: #f1c40f;
+            color: black;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background: #ecf0f1;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .expense-info {
+            flex-grow: 1;
+        }
+    </style>
+</head>
 <body>
 
-<header>
-<h1>💰 Expense Tracker</h1>
-<p>Track your spending easily</p>
-</header>
+    <h1>💰 Expense Tracker</h1>
 
-<div class="dashboard">
+    <!-- Summary Section -->
+    <div class="card summary">
+        <div>
+            Total Spent: <br>
+            <span id="totalAmount" style="color: #e74c3c; font-size: 24px;">₱0</span>
+        </div>
+        <div style="text-align: right;">
+            Monthly Budget: <br>
+            <span id="budgetDisplay" style="color: #27ae60; font-size: 24px;">Not Set</span>
+            <br>
+            <button class="small-btn" onclick="setBudget()" style="background-color: #34495e;">Set Budget</button>
+        </div>
+    </div>
 
-<div class="card">
-<h2>Total Expenses</h2>
-<p id="totalAmount">₱0</p>
-</div>
+    <!-- Input Form Section -->
+    <div class="card">
+        <h2>Add an Expense</h2>
+        
+        <label>Amount (₱):</label>
+        <input type="number" id="amount" placeholder="e.g. 150">
 
-<div class="card">
-<h2>Budget</h2>
-<p id="budgetDisplay">Not Set</p>
-<button onclick="setBudget()">Set Budget</button>
-</div>
+        <label>Date:</label>
+        <input type="date" id="date">
 
-</div>
+        <label>Category:</label>
+        <select id="category">
+            <option value="Food">Food</option>
+            <option value="Transport">Transport</option>
+            <option value="School">School</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Other">Other</option>
+        </select>
 
+        <label>Note:</label>
+        <input type="text" id="note" placeholder="What did you buy?">
 
-<div class="container">
+        <button onclick="addExpense()">Add Expense</button>
+    </div>
 
-<div class="card">
+    <!-- Reports Section -->
+    <div class="card">
+        <h2>Reports</h2>
+        <button onclick="monthlyReport()">Show Monthly Report</button>
+        <button onclick="categorySummary()">Show Category Summary</button>
+        <p id="report" style="white-space: pre-line; font-weight: bold; color: #2980b9;"></p>
+    </div>
 
-<h2>Add Expense</h2>
+    <!-- Expense List Section -->
+    <div class="card">
+        <h2>My Expenses</h2>
+        <ul id="expenseList">
+            <!-- JavaScript will put list items here -->
+        </ul>
+    </div>
 
-<input id="amount" type="number" placeholder="Amount">
+    <script>
+        // --- 1. VARIABLES ---
+        // Get data from local storage, or start with empty arrays/null if it's the first time
+        let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+        let budget = localStorage.getItem("budget") || null;
 
-<input id="date" type="date">
+        // --- 2. SAVING DATA ---
+        function save() {
+            localStorage.setItem("expenses", JSON.stringify(expenses));
+        }
 
-<select id="category">
-<option>Food</option>
-<option>Transport</option>
-<option>Bills</option>
-<option>School</option>
-<option>Other</option>
-</select>
+        function saveBudget() {
+            localStorage.setItem("budget", budget);
+        }
 
-<input id="note" placeholder="Notes">
+        // --- 3. MATH & UPDATES ---
+        function updateTotal() {
+            let total = 0;
 
-<button onclick="addExpense()">Add Expense</button>
+            // Loop through all expenses and add their amounts together
+            for (let i = 0; i < expenses.length; i++) {
+                total += expenses[i].amount;
+            }
 
-</div>
+            // Update the screen
+            document.getElementById("totalAmount").innerText = "₱" + total;
 
+            // Update budget text on screen
+            if (budget !== null) {
+                document.getElementById("budgetDisplay").innerText = "₱" + budget;
+            } else {
+                document.getElementById("budgetDisplay").innerText = "Not Set";
+            }
 
-<div class="card">
+            checkBudget(total);
+        }
 
-<h2>Expense List</h2>
+        function checkBudget(currentTotal) {
+            if (!budget) {
+                return; // Stop if no budget is set
+            }
 
-<ul id="expenseList"></ul>
+            if (currentTotal > budget) {
+                alert("WARNING: You have exceeded your budget!");
+            }
+        }
 
-</div>
+        // --- 4. DISPLAY THE LIST ---
+        function render() {
+            let list = document.getElementById("expenseList");
+            list.innerHTML = ""; // Clear the list before redrawing
 
+            // Loop through the array and create HTML for each item
+            expenses.forEach((e, i) => {
+                let li = document.createElement("li");
 
-<div class="card">
+                li.innerHTML = `
+                    <div class="expense-info">
+                        <strong>₱${e.amount}</strong> - ${e.category} <br>
+                        <small>${e.date} | ${e.note}</small>
+                    </div>
+                    <div>
+                        <button class="small-btn edit-btn" onclick="editExpense(${i})">Edit</button>
+                        <button class="small-btn" onclick="deleteExpense(${i})">Delete</button>
+                    </div>
+                `;
 
-<h2>Reports</h2>
+                list.appendChild(li);
+            });
 
-<button onclick="monthlyReport()">Monthly Report</button>
+            // Update the math at the top
+            updateTotal();
+        }
 
-<button onclick="categorySummary()">Category Summary</button>
+        // --- 5. ADDING AN EXPENSE ---
+        function addExpense() {
+            let amount = document.getElementById("amount").value;
+            let date = document.getElementById("date").value;
+            let category = document.getElementById("category").value;
+            let note = document.getElementById("note").value;
 
-<button onclick="exportCSV()">Export CSV</button>
+            // Make sure they filled in the important parts
+            if (!amount || !date) {
+                alert("Please enter an amount and a date!");
+                return;
+            }
 
-<p id="report"></p>
+            // Save it to our array
+            expenses.push({
+                amount: parseFloat(amount),
+                date: date,
+                category: category,
+                note: note
+            });
 
-</div>
+            // Save and refresh screen
+            save();
+            render();
 
-</div>
+            // Clear the boxes for the next input
+            document.getElementById("amount").value = "";
+            document.getElementById("note").value = "";
+        }
 
-<script src="script.js"></script>
+        // --- 6. EDITING & DELETING ---
+        function editExpense(index) {
+            let e = expenses[index];
 
+            // Use simple prompts to get new info
+            let newAmount = prompt("Edit Amount:", e.amount);
+            let newDate = prompt("Edit Date (YYYY-MM-DD):", e.date);
+            let newCategory = prompt("Edit Category (Food, Transport, School, Entertainment, Other):", e.category);
+            let newNote = prompt("Edit Notes:", e.note);
+
+            if (!newAmount || !newDate) {
+                alert("Amount and date are required!");
+                return;
+            }
+
+            // Update the array
+            expenses[index] = {
+                amount: parseFloat(newAmount),
+                date: newDate,
+                category: newCategory,
+                note: newNote
+            };
+
+            save();
+            render();
+        }
+
+        function deleteExpense(index) {
+            // Remove 1 item at the specific index
+            expenses.splice(index, 1);
+            save();
+            render();
+        }
+
+        function setBudget() {
+            let value = prompt("Enter your monthly budget:");
+
+            if (!value) {
+                return;
+            }
+
+            budget = parseFloat(value);
+            saveBudget();
+            alert("Budget set to ₱" + budget);
+            render(); // Refresh the screen
+        }
+
+        // --- 7. REPORTS ---
+        function monthlyReport() {
+            let month = prompt("Enter month (YYYY-MM) like '2023-10':");
+            if(!month) return;
+
+            let total = 0;
+
+            expenses.forEach(e => {
+                if (e.date.startsWith(month)) {
+                    total += e.amount;
+                }
+            });
+
+            document.getElementById("report").innerText = "Total spending for " + month + ": ₱" + total;
+        }
+
+        function categorySummary() {
+            let summary = {};
+
+            // Add up totals for each category
+            expenses.forEach(e => {
+                if(summary[e.category] == undefined) {
+                    summary[e.category] = 0;
+                }
+                summary[e.category] += e.amount;
+            });
+
+            let text = "Category Summary:\n";
+            for (let cat in summary) {
+                text += cat + " : ₱" + summary[cat] + "\n";
+            }
+
+            document.getElementById("report").innerText = text;
+        }
+
+        // Start the app by displaying whatever is saved
+        render();
+
+    </script>
 </body>
 </html>
