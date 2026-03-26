@@ -1,39 +1,72 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <link rel="stylesheet" href="/static/style.css">
-    <title>Python Tracker</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Professional Web App</title>
+    
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+    </style>
 </head>
 <body>
-    <h1>💰 Sharp Tracker</h1>
 
-    <div class="card">
-        <h3>Total Spent: ₱{{ total }}</h3>
+    <div class="container">
+        <h1>Welcome</h1>
+        <p>This is where your content lives.</p>
+        <button id="actionBtn">Send Data to Python</button>
+        <p id="response"></p>
     </div>
 
-    <div class="card">
-        <form action="/add" method="POST">
-            <input type="number" name="amount" placeholder="Amount" required>
-            <input type="date" name="date" required>
-            <select name="category">
-                <option>Food</option>
-                <option>School</option>
-                <option>Transport</option>
-            </select>
-            <input type="text" name="note" placeholder="Notes">
-            <button type="submit">ADD EXPENSE</button>
-        </form>
-    </div>
-
-    <div class="card">
-        <ul>
-            {% for e in expenses %}
-            <li>
-                <span>₱{{ e.amount }} - {{ e.category }}</span>
-                <small>{{ e.date }}</small>
-            </li>
-            {% endfor %}
-        </ul>
-    </div>
+    <script>
+        document.getElementById('actionBtn').onclick = function() {
+            // This is where you communicate with your app.py routes
+            fetch('/api/data') 
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('response').innerText = data.message;
+                });
+        };
+    </script>
 </body>
 </html>
