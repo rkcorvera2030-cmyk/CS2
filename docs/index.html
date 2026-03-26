@@ -3,70 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Professional Web App</title>
+    <title>SHARP TRACKER V2</title>
     
     <style>
-        :root {
-            --primary-color: #4a90e2;
-            --bg-color: #f4f7f6;
-            --text-color: #333;
-        }
-
+        /* --- 1. THE BRUTALIST UI --- */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+            font-family: 'Courier New', monospace;
+            background-color: #000;
+            color: #00ff41;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 80px; /* Space for the Status Bar */
         }
 
-        .container {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        .card {
+            background-color: #111;
+            padding: 20px;
+            border: 2px solid #00ff41;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        h1, h2 {
+            text-transform: uppercase;
+            background: #00ff41;
+            color: #000;
+            padding: 5px;
+            display: inline-block;
+        }
+
+        input, select, button {
             width: 100%;
-            max-width: 400px;
-            text-align: center;
+            padding: 12px;
+            margin: 8px 0;
+            border: 2px solid #00ff41;
+            background-color: #000;
+            color: #00ff41;
+            font-family: inherit;
+            border-radius: 0px;
         }
 
         button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: transform 0.2s;
+            background-color: #00ff41;
+            color: #000;
+            font-weight: 900;
+            cursor: crosshair;
         }
 
         button:hover {
-            transform: scale(1.05);
-            filter: brightness(1.1);
+            background-color: #fff;
+            color: #000;
+        }
+
+        /* --- 2. CUSTOM ERROR GUI (THE STATUS BAR) --- */
+        #statusBar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #f00; /* Bright Red for Alerts */
+            color: #fff;
+            padding: 10px;
+            font-weight: bold;
+            display: none; /* Hidden by default */
+            border-top: 4px solid #fff;
+            z-index: 1000;
+            text-align: center;
+        }
+
+        /* --- 3. INLINE LIST & EDITING --- */
+        ul { list-style: none; padding: 0; }
+        
+        li {
+            border: 1px solid #333;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .edit-input {
+            width: 70px;
+            padding: 2px;
+            margin: 0;
+            display: inline;
+        }
+
+        .delete-btn {
+            background: #f00;
+            color: #fff;
+            width: auto;
+            padding: 2px 10px;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Welcome</h1>
-        <p>This is where your content lives.</p>
-        <button id="actionBtn">Send Data to Python</button>
-        <p id="response"></p>
+    <h1>[ SYSTEM_ACTIVE ]</h1>
+
+    <div class="card">
+        <div>TOTAL_SPENT: <span id="totalAmount">₱0</span></div>
+        <hr border="1">
+        <input type="number" id="budgetInput" placeholder="SET_LIMIT_HERE">
+        <button onclick="setBudget()">UPDATE_LIMIT</button>
+        <div>CURRENT_LIMIT: <span id="budgetDisplay">NONE</span></div>
     </div>
 
+    <div class="card">
+        <h2>ADD_DATA</h2>
+        <input type="number" id="amount" placeholder="AMOUNT">
+        <input type="date" id="date">
+        <input type="text" id="note" placeholder="NOTE">
+        <button onclick="addExpense()">EXECUTE_ENTRY</button>
+    </div>
+
+    <div class="card">
+        <h2>LOG_HISTORY</h2>
+        <ul id="expenseList"></ul>
+    </div>
+
+    <div id="statusBar">ERROR: NULL_DATA_DETECTED</div>
+
     <script>
-        document.getElementById('actionBtn').onclick = function() {
-            // This is where you communicate with your app.py routes
-            fetch('/api/data') 
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('response').innerText = data.message;
-                });
-        };
+        let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+        let budget = localStorage.getItem("budget") || 0;
+
+        // CUSTOM ERROR FUNCTION (No more browser popups!)
+        function triggerError(msg) {
+            let bar = document.getElementById("statusBar");
+            bar.innerText = ">>> SYSTEM_ALERT: " + msg;
+            bar.style.display = "block";
+            setTimeout(() => { bar.style.display = "none"; }, 3000);
+        }
+
+        function render() {
+            let list = document.getElementById("expenseList");
+            let total = 0;
+            list.innerHTML = "";
+
+            expenses.forEach((e, i) => {
+                total += parseFloat(e.amount);
+                let li = document.createElement("li");
+                li.innerHTML = `
+                    <div>
+                        ₱${e.amount} | ${e.note}
+                    </div>
+                    <button class="delete-btn" onclick="deleteExpense(${i})">DELETE</button>
+                `;
+                list.appendChild(li);
+            });
+
+            document.getElementById("totalAmount").innerText = "₱" + total;
+            document.getElementById("budgetDisplay").innerText = budget > 0 ? "₱" + budget : "NONE";
+
+            if (budget > 0 && total > budget) {
+                triggerError("BUDGET_EXCEEDED_IMMEDIATE_ACTION_REQUIRED");
+            }
+        }
+
+        function addExpense() {
+            let amt = document.getElementById("amount").value;
+            let dt = document.getElementById("date").value;
+            let nt = document.getElementById("note").value;
+
+            if (!amt || !dt) {
+                triggerError("INCOMPLETE_FIELD_DETECTED");
+                return;
+            }
+
+            expenses.push({ amount: amt, date: dt, note: nt });
+            localStorage.setItem("expenses", JSON.stringify(expenses));
+            render();
+        }
+
+        function setBudget() {
+            let b = document.getElementById("budgetInput").value;
+            if (!b) return triggerError("INPUT_BUDGET_VALUE");
+            budget = b;
+            localStorage.setItem("budget", budget);
+            render();
+        }
+
+        function deleteExpense(index) {
+            expenses.splice(index, 1);
+            localStorage.setItem("expenses", JSON.stringify(expenses));
+            render();
+        }
+
+        render();
     </script>
 </body>
 </html>
