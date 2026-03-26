@@ -5,28 +5,38 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>School Expense Tracker</title>
 
+<!-- 🔥 Clean Font -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
 <style>
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', sans-serif;
     background: #f1f5f9;
     padding: 20px;
     max-width: 900px;
     margin: auto;
+    color: #0f172a;
 }
 
-h1 { margin-bottom: 20px; }
+h1 {
+    font-weight: 800;
+    margin-bottom: 20px;
+}
 
 .card {
     background: white;
     padding: 20px;
-    border-radius: 12px;
+    border-radius: 14px;
     margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
 input, select {
     width: 100%;
     padding: 10px;
     margin-bottom: 10px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
 }
 
 button {
@@ -36,30 +46,57 @@ button {
     color: white;
     cursor: pointer;
     border-radius: 8px;
+    font-weight: 600;
 }
 
-button:hover { background: #1d4ed8; }
+button:hover {
+    background: #1d4ed8;
+}
 
-.del-btn { background: red; }
-.edit-btn { background: orange; margin-right: 5px; }
+.edit-btn {
+    background: #f59e0b;
+    margin-right: 5px;
+}
+
+.del-btn {
+    background: #ef4444;
+}
 
 #statusBar {
     display: none;
-    background: red;
+    background: #ef4444;
     color: white;
     padding: 10px;
     text-align: center;
+    border-radius: 8px;
     margin-bottom: 10px;
 }
 
+/* 🔥 TABLE FIX */
 table {
     width: 100%;
     border-collapse: collapse;
 }
 
-td, th {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
+th {
+    text-align: left;
+    padding: 12px;
+    font-size: 13px;
+    color: #64748b;
+}
+
+td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.amount {
+    text-align: right;
+    font-weight: 700;
+}
+
+.actions {
+    text-align: center;
 }
 </style>
 </head>
@@ -68,13 +105,13 @@ td, th {
 
 <div id="statusBar"></div>
 
-<h1>📖 Expense Tracker</h1>
+<h1>📖 School Expense Tracker</h1>
 
 <div class="card">
     <h3>Set Budget</h3>
     <input type="number" id="budgetInput" placeholder="Enter budget">
     <button onclick="setBudget()">Set Budget</button>
-    <p>Current Budget: ₱<span id="budgetDisplay">0</span></p>
+    <p><strong>Current Budget:</strong> ₱<span id="budgetDisplay">0.00</span></p>
 </div>
 
 <div class="card">
@@ -91,19 +128,19 @@ td, th {
 
     <input type="text" id="note" placeholder="Note">
 
-    <button onclick="addExpense()">Add Expense</button>
+    <button onclick="addExpense()">Add / Update Expense</button>
 </div>
 
 <div class="card">
-    <h3>Total: ₱<span id="total">0</span></h3>
+    <h3>Total: ₱<span id="total">0.00</span></h3>
 
     <table>
         <thead>
             <tr>
                 <th>Note</th>
                 <th>Category</th>
-                <th>Amount</th>
-                <th>Actions</th>
+                <th class="amount">Amount</th>
+                <th class="actions">Actions</th>
             </tr>
         </thead>
         <tbody id="list"></tbody>
@@ -135,8 +172,8 @@ function render() {
         <tr>
             <td>${e.note}</td>
             <td>${e.category}</td>
-            <td>₱${e.amount}</td>
-            <td>
+            <td class="amount">₱${Number(e.amount).toFixed(2)}</td>
+            <td class="actions">
                 <button class="edit-btn" onclick="editExpense(${i})">Edit</button>
                 <button class="del-btn" onclick="deleteExpense(${i})">Delete</button>
             </td>
@@ -144,8 +181,8 @@ function render() {
         `;
     });
 
-    document.getElementById("total").innerText = total;
-    document.getElementById("budgetDisplay").innerText = budget;
+    document.getElementById("total").innerText = total.toFixed(2);
+    document.getElementById("budgetDisplay").innerText = budget.toFixed(2);
 
     if (budget > 0 && total > budget) {
         showError("⚠ Budget exceeded!");
@@ -153,14 +190,16 @@ function render() {
 }
 
 function addExpense() {
-    let amt = document.getElementById("amount").value;
+    let raw = document.getElementById("amount").value;
     let cat = document.getElementById("category").value;
     let note = document.getElementById("note").value || "No note";
 
-    if (!amt || amt <= 0) {
+    if (!raw || raw <= 0) {
         showError("Enter valid amount!");
         return;
     }
+
+    let amt = parseFloat(raw).toFixed(2);
 
     if (editIndex === -1) {
         expenses.push({ amount: amt, category: cat, note: note });
@@ -201,7 +240,7 @@ function setBudget() {
         return;
     }
 
-    budget = Number(val);
+    budget = Number(parseFloat(val).toFixed(2));
     localStorage.setItem("budget", budget);
 
     document.getElementById("budgetInput").value = "";
