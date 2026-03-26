@@ -3,169 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TERMINAL_TRACKER_V3</title>
+    <title>School Expense Tracker</title>
     <style>
-        /* THE "NO-FLUFF" BRUTALIST STYLE */
+        /* --- SLEEK WHITE DESIGN (NO ROUNDED CORNERS) --- */
         body {
-            font-family: 'Courier New', monospace;
-            background-color: #050505;
-            color: #00ff41;
-            max-width: 800px;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: #1a1a1a;
+            max-width: 850px;
             margin: 0 auto;
-            padding: 10px;
+            padding: 20px;
         }
 
-        /* GRID LAYOUT: Put everything side-by-side to save space */
+        h1 {
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-left: 5px solid #2563eb;
+            padding-left: 15px;
+            margin-bottom: 25px;
+        }
+
         .dashboard {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 20px;
         }
 
         .card {
-            border: 2px solid #00ff41;
-            padding: 15px;
-            background: #000;
+            background: #ffffff;
+            border: 1px solid #d1d5db;
+            padding: 20px;
+            /* SHARP EDGES ONLY */
+            border-radius: 0px; 
+            box-shadow: 4px 4px 0px #e5e7eb;
+        }
+
+        .stat-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f3f4f6;
         }
 
-        h2 {
-            margin: 0 0 10px 0;
-            font-size: 14px;
-            background: #00ff41;
-            color: #000;
-            display: inline-block;
-            padding: 2px 5px;
-        }
+        .total-val { font-size: 22px; font-weight: 800; color: #2563eb; }
 
+        /* FORM ELEMENTS */
+        label { font-size: 12px; font-weight: bold; text-transform: uppercase; color: #6b7280; }
+        
         input, select, button {
             width: 100%;
-            padding: 8px;
-            margin: 5px 0;
-            border: 1px solid #00ff41;
-            background: #000;
-            color: #00ff41;
-            border-radius: 0;
+            padding: 10px;
+            margin: 5px 0 15px 0;
+            border: 1px solid #d1d5db;
+            border-radius: 0px; 
+            background: #fff;
             font-family: inherit;
         }
 
         button {
-            background: #00ff41;
-            color: #000;
+            background-color: #1a1a1a;
+            color: #fff;
+            border: none;
             font-weight: bold;
-            cursor: crosshair;
+            cursor: pointer;
+            text-transform: uppercase;
         }
 
+        /* HOVER: Darker/Flat */
         button:hover {
-            background: #fff;
+            background-color: #000;
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.2);
         }
 
+        /* CUSTOM ERROR BAR */
         #statusBar {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            background: #f00;
+            background: #dc2626;
             color: #fff;
             text-align: center;
-            display: none;
-            z-index: 9999;
+            padding: 10px;
             font-weight: bold;
-        }
-
-        ul { list-style: none; padding: 0; margin: 0; }
-        li {
-            border-bottom: 1px dashed #00ff41;
-            padding: 5px 0;
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-        }
-
-        .del-btn { width: auto; padding: 0 5px; background: #300; color: #f00; border: 1px solid #f00; }
-    </style>
-</head>
-<body>
-
-    <div id="statusBar">SYSTEM_ERROR</div>
-
-    <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
-        <span>[STATUS: ACTIVE]</span>
-        <span>TOTAL_SPENT: <strong id="totalAmount">₱0</strong></span>
-        <span>LIMIT: <strong id="budgetDisplay">0</strong></span>
-    </div>
-
-    <div class="dashboard">
-        <div class="card">
-            <h2>NEW_ENTRY</h2>
-            <input type="number" id="amount" placeholder="AMT">
-            <input type="date" id="date">
-            <input type="text" id="note" placeholder="MEMO">
-            <button onclick="addExpense()">+ EXECUTE</button>
-            <hr border="1" style="border-color: #222;">
-            <h2>SET_LIMIT</h2>
-            <input type="number" id="budgetInput" placeholder="NEW_LIMIT">
-            <button onclick="setBudget()">UPDATE</button>
-        </div>
-
-        <div class="card">
-            <h2>HISTORY_LOG</h2>
-            <ul id="expenseList"></ul>
-        </div>
-    </div>
-
-    <script>
-        let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
-        let budget = localStorage.getItem("budget") || 0;
-
-        function triggerError(msg) {
-            let bar = document.getElementById("statusBar");
-            bar.innerText = ">> ALERT: " + msg;
-            bar.style.display = "block";
-            setTimeout(() => { bar.style.display = "none"; }, 2500);
-        }
-
-        function render() {
-            let list = document.getElementById("expenseList");
-            let total = 0;
-            list.innerHTML = "";
-            expenses.forEach((e, i) => {
-                total += parseFloat(e.amount);
-                let li = document.createElement("li");
-                li.innerHTML = `<span>₱${e.amount} | ${e.note}</span> <button class="del-btn" onclick="deleteExpense(${i})">X</button>`;
-                list.appendChild(li);
-            });
-            document.getElementById("totalAmount").innerText = "₱" + total;
-            document.getElementById("budgetDisplay").innerText = "₱" + budget;
-            if (budget > 0 && total > budget) triggerError("LIMIT_EXCEEDED");
-        }
-
-        function addExpense() {
-            let amt = document.getElementById("amount").value;
-            let dt = document.getElementById("date").value;
-            let nt = document.getElementById("note").value;
-            if (!amt || !dt) return triggerError("MISSING_DATA");
-            expenses.push({ amount: amt, date: dt, note: nt });
-            localStorage.setItem("expenses", JSON.stringify(expenses));
-            render();
-            document.getElementById("amount").value = "";
-        }
-
-        function setBudget() {
-            let b = document.getElementById("budgetInput").value;
-            if (!b) return triggerError("NULL_LIMIT");
-            budget = b;
-            localStorage.setItem("budget", budget);
-            render();
-        }
-
-        function deleteExpense(i) {
-            expenses.splice(i, 1);
-            localStorage.setItem("expenses", JSON.stringify(expenses));
-            render();
-        }
-
-        render();
-    </script>
-</body>
-</html>
+            display: none;
