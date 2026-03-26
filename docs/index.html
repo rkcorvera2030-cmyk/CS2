@@ -1,109 +1,216 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School Expense Tracker</title>
-    <style>
-        /* --- SLEEK WHITE DESIGN WITH ROUNDED CORNERS --- */
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #f8fafc;
-            color: #1e293b;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>School Expense Tracker</title>
 
-        h1 {
-            font-size: 26px;
-            font-weight: 800;
-            color: #0f172a;
-            margin-bottom: 30px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f1f5f9;
+    padding: 20px;
+    max-width: 900px;
+    margin: auto;
+}
 
-        .dashboard {
-            display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 24px;
-        }
+h1 { margin-bottom: 20px; }
 
-        .card {
-            background: #ffffff;
-            padding: 24px;
-            /* THE ROUNDED EDGES */
-            border-radius: 16px; 
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
 
-        .stat-card {
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            margin-bottom: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+}
 
-        .stat-label { font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; }
-        .stat-val { font-size: 28px; font-weight: 800; color: #2563eb; }
+button {
+    padding: 10px;
+    border: none;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+    border-radius: 8px;
+}
 
-        /* FORM ELEMENTS */
-        label { font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 5px; display: block; }
-        
-        input, select {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 18px;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 10px; /* Rounded inputs */
-            background: #fff;
-            font-size: 14px;
-            box-sizing: border-box;
-            transition: border-color 0.2s;
-        }
+button:hover { background: #1d4ed8; }
 
-        input:focus { border-color: #2563eb; outline: none; }
+.del-btn { background: red; }
+.edit-btn { background: orange; margin-right: 5px; }
 
-        button {
-            width: 100%;
-            padding: 14px;
-            background-color: #2563eb;
-            color: #fff;
-            border: none;
-            border-radius: 10px; /* Rounded buttons */
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+#statusBar {
+    display: none;
+    background: red;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    margin-bottom: 10px;
+}
 
-        button:hover { background-color: #1d4ed8; transform: translateY(-1px); }
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
 
-        /* CUSTOM ERROR BAR */
-        #statusBar {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 400px;
-            background: #ef4444;
-            color: #fff;
-            text-align: center;
-            padding: 12px;
-            border-radius: 12px;
-            font-weight: 600;
-            display: none;
-            z-index: 1000;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
+td, th {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+</style>
+</head>
 
-        /* TABLE LOG */
-        table { width: 100%; border-collapse: separate; border-spacing: 0; }
-        th { text-align: left; padding: 12px; color: #64748b; font-size: 13px; border
+<body>
+
+<div id="statusBar"></div>
+
+<h1>📖 Expense Tracker</h1>
+
+<div class="card">
+    <h3>Set Budget</h3>
+    <input type="number" id="budgetInput" placeholder="Enter budget">
+    <button onclick="setBudget()">Set Budget</button>
+    <p>Current Budget: ₱<span id="budgetDisplay">0</span></p>
+</div>
+
+<div class="card">
+    <h3>Add Expense</h3>
+
+    <input type="number" id="amount" placeholder="Amount">
+
+    <select id="category">
+        <option>Food</option>
+        <option>Transport</option>
+        <option>Supplies</option>
+        <option>Other</option>
+    </select>
+
+    <input type="text" id="note" placeholder="Note">
+
+    <button onclick="addExpense()">Add Expense</button>
+</div>
+
+<div class="card">
+    <h3>Total: ₱<span id="total">0</span></h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Note</th>
+                <th>Category</th>
+                <th>Amount</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="list"></tbody>
+    </table>
+</div>
+
+<script>
+let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+let budget = Number(localStorage.getItem("budget")) || 0;
+let editIndex = -1;
+
+function showError(msg) {
+    let bar = document.getElementById("statusBar");
+    bar.innerText = msg;
+    bar.style.display = "block";
+    setTimeout(() => bar.style.display = "none", 2000);
+}
+
+function render() {
+    let list = document.getElementById("list");
+    list.innerHTML = "";
+
+    let total = 0;
+
+    expenses.forEach((e, i) => {
+        total += Number(e.amount);
+
+        list.innerHTML += `
+        <tr>
+            <td>${e.note}</td>
+            <td>${e.category}</td>
+            <td>₱${e.amount}</td>
+            <td>
+                <button class="edit-btn" onclick="editExpense(${i})">Edit</button>
+                <button class="del-btn" onclick="deleteExpense(${i})">Delete</button>
+            </td>
+        </tr>
+        `;
+    });
+
+    document.getElementById("total").innerText = total;
+    document.getElementById("budgetDisplay").innerText = budget;
+
+    if (budget > 0 && total > budget) {
+        showError("⚠ Budget exceeded!");
+    }
+}
+
+function addExpense() {
+    let amt = document.getElementById("amount").value;
+    let cat = document.getElementById("category").value;
+    let note = document.getElementById("note").value || "No note";
+
+    if (!amt || amt <= 0) {
+        showError("Enter valid amount!");
+        return;
+    }
+
+    if (editIndex === -1) {
+        expenses.push({ amount: amt, category: cat, note: note });
+    } else {
+        expenses[editIndex] = { amount: amt, category: cat, note: note };
+        editIndex = -1;
+    }
+
+    localStorage.setItem("expenses", JSON.stringify(expenses));
+
+    document.getElementById("amount").value = "";
+    document.getElementById("note").value = "";
+
+    render();
+}
+
+function editExpense(index) {
+    let e = expenses[index];
+
+    document.getElementById("amount").value = e.amount;
+    document.getElementById("category").value = e.category;
+    document.getElementById("note").value = e.note;
+
+    editIndex = index;
+}
+
+function deleteExpense(index) {
+    expenses.splice(index, 1);
+    localStorage.setItem("expenses", JSON.stringify(expenses));
+    render();
+}
+
+function setBudget() {
+    let val = document.getElementById("budgetInput").value;
+
+    if (!val || val <= 0) {
+        showError("Enter valid budget!");
+        return;
+    }
+
+    budget = Number(val);
+    localStorage.setItem("budget", budget);
+
+    document.getElementById("budgetInput").value = "";
+
+    render();
+}
+
+render();
+</script>
+
+</body>
+</html>
