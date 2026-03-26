@@ -3,190 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SHARP TRACKER V2</title>
-    
+    <title>TERMINAL_TRACKER_V3</title>
     <style>
-        /* --- 1. THE BRUTALIST UI --- */
+        /* THE "NO-FLUFF" BRUTALIST STYLE */
         body {
             font-family: 'Courier New', monospace;
-            background-color: #000;
+            background-color: #050505;
             color: #00ff41;
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
-            padding-bottom: 80px; /* Space for the Status Bar */
+            padding: 10px;
+        }
+
+        /* GRID LAYOUT: Put everything side-by-side to save space */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
         }
 
         .card {
-            background-color: #111;
-            padding: 20px;
             border: 2px solid #00ff41;
-            margin-bottom: 20px;
-            position: relative;
+            padding: 15px;
+            background: #000;
+            margin-bottom: 10px;
         }
 
-        h1, h2 {
-            text-transform: uppercase;
+        h2 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
             background: #00ff41;
             color: #000;
-            padding: 5px;
             display: inline-block;
+            padding: 2px 5px;
         }
 
         input, select, button {
             width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            border: 2px solid #00ff41;
-            background-color: #000;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #00ff41;
+            background: #000;
             color: #00ff41;
+            border-radius: 0;
             font-family: inherit;
-            border-radius: 0px;
         }
 
         button {
-            background-color: #00ff41;
+            background: #00ff41;
             color: #000;
-            font-weight: 900;
+            font-weight: bold;
             cursor: crosshair;
         }
 
         button:hover {
-            background-color: #fff;
-            color: #000;
+            background: #fff;
         }
 
-        /* --- 2. CUSTOM ERROR GUI (THE STATUS BAR) --- */
         #statusBar {
             position: fixed;
-            bottom: 0;
+            top: 0;
             left: 0;
             width: 100%;
-            background: #f00; /* Bright Red for Alerts */
-            color: #fff;
-            padding: 10px;
-            font-weight: bold;
-            display: none; /* Hidden by default */
-            border-top: 4px solid #fff;
-            z-index: 1000;
-            text-align: center;
-        }
-
-        /* --- 3. INLINE LIST & EDITING --- */
-        ul { list-style: none; padding: 0; }
-        
-        li {
-            border: 1px solid #333;
-            padding: 10px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .edit-input {
-            width: 70px;
-            padding: 2px;
-            margin: 0;
-            display: inline;
-        }
-
-        .delete-btn {
             background: #f00;
             color: #fff;
-            width: auto;
-            padding: 2px 10px;
+            text-align: center;
+            display: none;
+            z-index: 9999;
+            font-weight: bold;
         }
+
+        ul { list-style: none; padding: 0; margin: 0; }
+        li {
+            border-bottom: 1px dashed #00ff41;
+            padding: 5px 0;
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+
+        .del-btn { width: auto; padding: 0 5px; background: #300; color: #f00; border: 1px solid #f00; }
     </style>
 </head>
 <body>
 
-    <h1>[ SYSTEM_ACTIVE ]</h1>
+    <div id="statusBar">SYSTEM_ERROR</div>
 
-    <div class="card">
-        <div>TOTAL_SPENT: <span id="totalAmount">₱0</span></div>
-        <hr border="1">
-        <input type="number" id="budgetInput" placeholder="SET_LIMIT_HERE">
-        <button onclick="setBudget()">UPDATE_LIMIT</button>
-        <div>CURRENT_LIMIT: <span id="budgetDisplay">NONE</span></div>
+    <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
+        <span>[STATUS: ACTIVE]</span>
+        <span>TOTAL_SPENT: <strong id="totalAmount">₱0</strong></span>
+        <span>LIMIT: <strong id="budgetDisplay">0</strong></span>
     </div>
 
-    <div class="card">
-        <h2>ADD_DATA</h2>
-        <input type="number" id="amount" placeholder="AMOUNT">
-        <input type="date" id="date">
-        <input type="text" id="note" placeholder="NOTE">
-        <button onclick="addExpense()">EXECUTE_ENTRY</button>
-    </div>
+    <div class="dashboard">
+        <div class="card">
+            <h2>NEW_ENTRY</h2>
+            <input type="number" id="amount" placeholder="AMT">
+            <input type="date" id="date">
+            <input type="text" id="note" placeholder="MEMO">
+            <button onclick="addExpense()">+ EXECUTE</button>
+            <hr border="1" style="border-color: #222;">
+            <h2>SET_LIMIT</h2>
+            <input type="number" id="budgetInput" placeholder="NEW_LIMIT">
+            <button onclick="setBudget()">UPDATE</button>
+        </div>
 
-    <div class="card">
-        <h2>LOG_HISTORY</h2>
-        <ul id="expenseList"></ul>
+        <div class="card">
+            <h2>HISTORY_LOG</h2>
+            <ul id="expenseList"></ul>
+        </div>
     </div>
-
-    <div id="statusBar">ERROR: NULL_DATA_DETECTED</div>
 
     <script>
         let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
         let budget = localStorage.getItem("budget") || 0;
 
-        // CUSTOM ERROR FUNCTION (No more browser popups!)
         function triggerError(msg) {
             let bar = document.getElementById("statusBar");
-            bar.innerText = ">>> SYSTEM_ALERT: " + msg;
+            bar.innerText = ">> ALERT: " + msg;
             bar.style.display = "block";
-            setTimeout(() => { bar.style.display = "none"; }, 3000);
+            setTimeout(() => { bar.style.display = "none"; }, 2500);
         }
 
         function render() {
             let list = document.getElementById("expenseList");
             let total = 0;
             list.innerHTML = "";
-
             expenses.forEach((e, i) => {
                 total += parseFloat(e.amount);
                 let li = document.createElement("li");
-                li.innerHTML = `
-                    <div>
-                        ₱${e.amount} | ${e.note}
-                    </div>
-                    <button class="delete-btn" onclick="deleteExpense(${i})">DELETE</button>
-                `;
+                li.innerHTML = `<span>₱${e.amount} | ${e.note}</span> <button class="del-btn" onclick="deleteExpense(${i})">X</button>`;
                 list.appendChild(li);
             });
-
             document.getElementById("totalAmount").innerText = "₱" + total;
-            document.getElementById("budgetDisplay").innerText = budget > 0 ? "₱" + budget : "NONE";
-
-            if (budget > 0 && total > budget) {
-                triggerError("BUDGET_EXCEEDED_IMMEDIATE_ACTION_REQUIRED");
-            }
+            document.getElementById("budgetDisplay").innerText = "₱" + budget;
+            if (budget > 0 && total > budget) triggerError("LIMIT_EXCEEDED");
         }
 
         function addExpense() {
             let amt = document.getElementById("amount").value;
             let dt = document.getElementById("date").value;
             let nt = document.getElementById("note").value;
-
-            if (!amt || !dt) {
-                triggerError("INCOMPLETE_FIELD_DETECTED");
-                return;
-            }
-
+            if (!amt || !dt) return triggerError("MISSING_DATA");
             expenses.push({ amount: amt, date: dt, note: nt });
             localStorage.setItem("expenses", JSON.stringify(expenses));
             render();
+            document.getElementById("amount").value = "";
         }
 
         function setBudget() {
             let b = document.getElementById("budgetInput").value;
-            if (!b) return triggerError("INPUT_BUDGET_VALUE");
+            if (!b) return triggerError("NULL_LIMIT");
             budget = b;
             localStorage.setItem("budget", budget);
             render();
         }
 
-        function deleteExpense(index) {
-            expenses.splice(index, 1);
+        function deleteExpense(i) {
+            expenses.splice(i, 1);
             localStorage.setItem("expenses", JSON.stringify(expenses));
             render();
         }
