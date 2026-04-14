@@ -1,100 +1,95 @@
-## Quarter 3 Updated Project Documentation (Progress Update)
-
-## Project Title
+📄 Quarter 3 Updated Project Documentation (Progress Update)
+🏷️ Project Title
 
 CodeQuest: School Expense Tracker
 
-## Updated Problem Statement
+🧠 Updated Problem Statement
 
-Many students struggle to manage their daily spending and often do not record where their money goes. Without a simple tracking tool, budgeting becomes difficult. This project provides a beginner-friendly expense tracker program that records, saves, and summarizes expenses to help students build better spending habits.
+Many students struggle to manage their daily spending and often do not keep track of where their money goes. Without a simple tool, budgeting becomes difficult and unorganized. This project provides a beginner-friendly web-based expense tracker that records, saves, and summarizes expenses to help students develop better spending habits.
 
-## Updated Project Objectives
+🎯 Updated Project Objectives
+Allow users to add, edit, and delete expense records
+Save and load expense data using localStorage
+Automatically calculate total expenses
+Support budget limits with warning messages
+Provide a simple and clean user interface
+⚙️ Updated Feature List (Current Version)
+Add, edit, and delete expense entries
+View all expenses with total spending
+Categorize expenses (Food, Transport, Supplies, Other)
+Budget system with warning notification
+Real-time total calculation
+Auto save/load using browser localStorage
+Simple card-based interface design
+🧩 Revised File and Function Structure
+📁 File Structure
+index.html → main structure of the app
+CSS (inside HTML) → styling and layout
+JavaScript (inside HTML) → logic and functionality
+⚙️ Function Groups
 
-1. Let students add, edit, and delete expense records.
-2. Automatically save and load expense data using a JSON file.
-3. Calculate totals, monthly reports, and category summaries.
-4. Support budget limits with warning messages.
-5. Keep the interface simple through a text-based menu.
+Data Handling
 
-## Updated Feature List (Current Version)
+localStorage.getItem() → loads saved data
+localStorage.setItem() → saves expenses and budget
 
-* Add, edit, and delete expense entries
-* View all expenses with total spending
-* Search expenses by date or category
-* Monthly spending report
-* Category spending summary
-* Weekly and monthly budget checking with warnings
-* CSV export (expenses.csv)
-* Text backup file
-* Auto load/save using expenses.json
-* Looping menu interface
+Core Features
 
-## Revised File and Function Structure
+addExpense() → adds or updates expense
+editExpense() → loads data into input fields
+deleteExpense() → removes selected expense
 
-Main script sections:
+Display / UI
 
-* Data persistence: load_data(), save_data() using JSON
-* Core features: add_expense(), view_expenses(), search_expenses(), edit_expense(), delete_expense()
-* Reports: monthly_report(), category_summary()
-* Budget tools: set_budget(), check_budget()
-* Export tools: export_csv(), backup()
-* Menu controller: menu()
+render() → updates table, total, and budget display
+showError() → shows warning messages
 
-Functions are grouped by purpose to keep the code readable and easy to maintain.
+Budget System
 
-## Technologies and Tools Used
+setBudget() → saves and updates budget
+budget check inside render() → shows warning if exceeded
+🛠️ Technologies and Tools Used
+HTML — used to structure the interface
+CSS — used for styling and layout
+JavaScript — used for logic and interactivity
+Browser localStorage — used for saving data
+Google Fonts (Inter) — used for clean typography
+🔄 Methodology and Implementation
 
-* Python — chosen for simplicity and beginner-friendly syntax
-* Built-in libraries: json, csv, datetime — used for file storage, export, and date-based reports
-* GitHub — used for version control and progress tracking
+Expenses are stored in an array where each record contains the amount, category, and note. Data is saved using localStorage so it remains even after refreshing the page. Each feature is handled by a specific JavaScript function. The render() function updates the interface dynamically whenever changes are made. Since this is a web app, all processing happens on the client side.
 
-## Methodology and Implementation
-
-Expenses are stored in a list where each record contains amount, date, category, and notes. Data is saved locally in a JSON file so records are not lost after closing the program. Each major feature is implemented as a separate function and called through a looping text menu. Since this is a console app, there is no backend–frontend separation.
-
-## Key Design Decisions and Trade-offs
-
-* Used a text-based interface instead of a graphical UI to reduce complexity
-* Used JSON and CSV instead of a database for easier setup
-* Focused on readability over advanced optimization for student understanding
-
-## Planned Inputs and Outputs (Current)
-
+⚖️ Key Design Decisions and Trade-offs
+Used a web interface instead of console for better user experience
+Used localStorage instead of a database for simplicity
+Focused on clean UI and readability instead of complex features
+Kept categories fixed using a dropdown to avoid inconsistent input
+📥 Planned Inputs and Outputs (Current)
 Inputs:
-
-* Expense amount
-* Date (YYYY-MM-DD)
-* Category
-* Notes
-* Budget limits
-
+Expense amount
+Category selection
+Notes/description
+Budget value
 Outputs:
+Expense list (table format)
+Total spending
+Budget display
+Warning message if budget is exceeded
+🗂️ GitHub Repository Notes
+Organized and readable code structure
+Functions grouped by purpose
+README includes features and usage instructions
+Changelog tracks progress updates
+Clear commit messages for each feature added
+⚖️ Programming and Computing Ethics
 
-* Expense list display
-* Total spending
-* Monthly and category summaries
-* Budget warning messages
-* CSV and backup files
+This project follows proper computing practices:
 
-## GitHub Repository Notes
-
-* Organized file structure with grouped functions
-* Descriptive commit messages for each feature update
-* README includes setup steps, features, and progress status
-* Branches may be used for feature testing
-
-## Programming and Computing Ethics
-
-This project follows basic computing ethics:
-
-* Respect for intellectual property and open-source rules
-* APA-style credit for references when used
-* Simple and readable interface for accessibility
-* User privacy protected since all data is stored locally
-* Guided by principles from the ACM Code of Ethics
-
-## Group Members
-
-* Cathleah Pabia
-* Rhyz Kym Corvera
-* Meil Antepasado
+Respects intellectual property and uses proper references
+Includes APA-style citations in documentation and presentation
+Provides a simple and accessible interface for users
+Protects user privacy since all data is stored locally
+Guided by principles from the Association for Computing Machinery Code of Ethics
+👥 Group Members
+Cathleah Pabia
+Rhyz Kym Corvera
+Meil Antepasado
