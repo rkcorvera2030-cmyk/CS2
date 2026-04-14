@@ -2,118 +2,149 @@
 
 ## CodeQuest: School Expense Tracker
 
+---
+
 ## Overview
 
-This project is a Python-based expense tracker that helps students record and manage their daily spending. The program runs in a text-based menu and allows users to add, view, search, edit, and delete expenses. It also supports reports, budgets, and data export. The system is designed to be simple, readable, and easy to maintain.
+This project is a web-based expense tracker developed using HTML, CSS, and JavaScript. It allows students to record, manage, and monitor their daily expenses through an interactive interface.
+
+The system runs in a browser and provides features such as adding, editing, deleting expenses, setting a budget, and tracking total spending. Data is stored using localStorage, allowing information to persist even after refreshing the page.
+
+The design focuses on simplicity, usability, and real-time updates.
 
 ---
 
 ## How Core Features Were Implemented
 
-Expenses are stored in a list where each record contains four values: amount, date, category, and notes. Each major feature is written as a separate function to keep the code modular.
+Expenses are stored in a JavaScript array, where each expense contains:
+
+* amount
+* category
+* note
+
+Each feature is implemented using separate JavaScript functions to keep the code organized and easy to understand.
 
 Core functions include:
 
-* Adding expenses through user input with amount validation
-* Viewing all expenses with automatic total calculation
-* Searching by date or category using string matching
-* Editing and deleting entries using index selection
-* Monthly reports using date prefix checking
-* Category summaries using a dictionary total per category
+* Adding expenses using input fields with validation to prevent invalid values
+* Displaying all expenses dynamically using a table
+* Editing expenses by loading selected data back into the input fields
+* Deleting expenses using array manipulation
+* Calculating total expenses automatically during rendering
+* Budget checking that displays a warning when exceeded
 
-A looping menu function controls the program flow and repeatedly asks the user for actions until exit is chosen.
+A central function called `render()` updates the interface every time data changes. This ensures that the displayed data is always accurate.
 
 ---
 
 ## Data Storage Method
 
-The program uses a JSON file named **expenses.json** for data persistence.
+The program uses **localStorage** to store data directly in the browser.
 
-* When the program starts, it loads saved data using `load_data()`
-* When changes are made, it saves using `save_data()`
-* This prevents data loss between runs
-* JSON was chosen because it is simple and built into Python
+* Expenses are saved as a JSON string under the key `"expenses"`
+* Budget is saved under the key `"budget"`
+* Data is retrieved using `JSON.parse()` and stored using `JSON.stringify()`
 
----
+This approach ensures that:
 
-## Budget and Date Logic
-
-The program allows users to set weekly and monthly budgets.
-Totals are computed using sum calculations on stored expenses.
-
-Weekly budget checking uses the Python datetime library to compare the stored expense dates with the current week number. If totals go over the limit, the program prints a warning message.
+* Data is not lost when the page refreshes
+* No external database is required
+* The system remains simple and efficient
 
 ---
 
-## Export and Backup Features
+## Budget Logic
 
-Two safety features are included:
+The system allows users to set a budget using an input field.
 
-* CSV export using the csv library for spreadsheet use
-* Text backup file that writes all records line by line
+* The total expense is calculated by summing all stored expense amounts
+* During rendering, the program compares total expenses with the set budget
+* If the total exceeds the budget, a warning message is displayed using the status bar
 
-These features help prevent accidental data loss and improve usability.
+This provides immediate feedback to the user.
+
+---
+
+## User Interface Design
+
+The interface is divided into sections using card layouts:
+
+* Budget section
+* Expense input section
+* Expense list and total display
+
+A table is used to display expenses for better organization.
+
+CSS was used to:
+
+* Create a clean and modern layout
+* Improve readability using spacing and fonts
+* Add hover effects for better user interaction
+
+The design prioritizes clarity and ease of use.
 
 ---
 
 ## Technologies Used (with Justification)
 
-**Python** — beginner-friendly and good for list and file operations
-**json library** — used for saving and loading structured data
-**csv library** — used for spreadsheet-compatible export
-**datetime library** — used for weekly and monthly budget checks
-**GitHub** — used for version control and collaboration
+**HTML** — used to structure the layout and input fields
+**CSS** — used to design the interface and improve user experience
+**JavaScript** — used to handle logic, data processing, and interactivity
+**localStorage API** — used for saving and retrieving data in the browser
+**Google Fonts (Inter)** — used for improved typography
 
-These tools were selected because they are built-in, reliable, and appropriate for a student-level project.
+These technologies were chosen because they are widely used, beginner-friendly, and suitable for web-based applications.
 
 ---
 
 ## Backend–Frontend Communication
 
-Not applicable. The project is a console-based application. User input and program processing happen in the same script. There is no separate frontend or backend system.
+Not applicable. This project is a client-side web application.
+
+All processing, storage, and display occur within the browser using JavaScript. There is no separate backend server or database.
 
 ---
 
 ## Key Design Decisions and Trade-offs
 
-* A text-based interface was used instead of a graphical UI to reduce complexity
-* JSON file storage was used instead of a database for easier setup
-* Functions were separated by feature to improve readability
-* Simplicity and clarity were prioritized over advanced optimization
+* A web-based interface was used instead of a console program to improve usability
+* localStorage was used instead of a database to simplify development
+* A single-page design was used for faster interaction
+* The `render()` function was used to centralize UI updates
+* Simplicity and readability were prioritized over advanced features
 
 ---
 
 ## GitHub Repository Practices
 
-The repository is organized with:
+The repository follows good development practices:
 
-* Grouped functions and clear section comments
-* Descriptive commit messages for each feature update
-* Updated README with setup steps and progress status
-* Version tracking through a CHANGELOG file
-* Optional branch use for testing features
+* Code is organized into HTML, CSS, and JavaScript sections
+* Clear function naming for readability
+* Incremental commits showing feature development
+* README file explaining the project
+* CHANGELOG file tracking updates and improvements
 
 ---
 
 ## Programming and Computing Ethics
 
-This project follows basic programming and computing ethics:
+This project follows basic ethical practices:
 
-* Intellectual property is respected
-* No restricted or paid code was copied
-* Learning sources are credited in APA style when used
-* The interface is simple and readable for accessibility
-* User privacy is protected because all data is stored locally
-* Ethical guidance is based on general ACM Code of Ethics principles
+* No copyrighted or paid code was copied
+* Learning resources are properly cited in APA format
+* The system is designed to be simple and accessible
+* User data is stored locally to protect privacy
+* Ethical guidelines are based on general principles of responsible computing
+
+---
 
 ## References
 
-Python Software Foundation. (2024). *Python documentation*. [https://docs.python.org/3/](https://docs.python.org/3/)
+Mozilla Developer Network. (2023). *Web storage API*. [https://developer.mozilla.org](https://developer.mozilla.org)
 
-Python Software Foundation. (2024). *json — JSON encoder and decoder*. [https://docs.python.org/3/library/json.html](https://docs.python.org/3/library/json.html)
+Mozilla Developer Network. (2023). *JavaScript guide*. [https://developer.mozilla.org](https://developer.mozilla.org)
 
-Python Software Foundation. (2024). *csv — CSV file reading and writing*. [https://docs.python.org/3/library/csv.html](https://docs.python.org/3/library/csv.html)
+W3Schools. (2023). *HTML, CSS, and JavaScript tutorials*. [https://www.w3schools.com](https://www.w3schools.com)
 
-Python Software Foundation. (2024). *datetime — Basic date and time types*. [https://docs.python.org/3/library/datetime.html](https://docs.python.org/3/library/datetime.html)
-
-Association for Computing Machinery. (2018). *ACM code of ethics and professional conduct*. [https://www.acm.org/code-of-ethics](https://www.acm.org/code-of-ethics)
+Google Fonts. (2023). *Inter font*. [https://fonts.google.com](https://fonts.google.com)
